@@ -124,7 +124,8 @@
         "title": "激活 ClawX",
         "codePlaceholder": "粘贴激活码",
         "submit": "立即激活",
-        "validating": "校验中..."
+        "validating": "校验中...",
+        "invalidCode": "验证码无效。"
     },
     "nav": {
         "next": "下一步",

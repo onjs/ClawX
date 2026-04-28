@@ -96,8 +96,8 @@ function getLicenseFilePath(): string {
   return join(app.getPath('userData'), LICENSE_FILE_NAME);
 }
 
-function createFailure(reason: LicenseFailureReason, message: string): ParseFailure {
-  return { ok: false, reason, message };
+function createFailure(reason: LicenseFailureReason, _message: string): ParseFailure {
+  return { ok: false, reason, message: 'Invalid activation code.' };
 }
 
 function isValidPayload(payload: unknown): payload is LicensePayload {

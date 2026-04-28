@@ -124,7 +124,8 @@
         "title": "Activate ClawX",
         "codePlaceholder": "Paste activation code",
         "submit": "Activate",
-        "validating": "Validating..."
+        "validating": "Validating...",
+        "invalidCode": "Invalid activation code."
     },
     "nav": {
         "next": "Next",
