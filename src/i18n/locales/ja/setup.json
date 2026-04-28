@@ -40,7 +40,7 @@
         "viewLogs": "ログを表示",
         "recheck": "再チェック",
         "nodejs": "Node.js ランタイム",
-        "openclaw": "OpenClaw パッケージ",
+        "Openclaw": "OpenClaw パッケージ",
         "gateway": "ゲートウェイサービス",
         "startGateway": "ゲートウェイを起動",
         "status": {

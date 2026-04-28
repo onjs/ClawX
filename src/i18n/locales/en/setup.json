@@ -40,7 +40,7 @@
         "viewLogs": "View Logs",
         "recheck": "Re-check",
         "nodejs": "Node.js Runtime",
-        "openclaw": "OpenClaw Package",
+        "Openclaw": "OpenClaw Package",
         "gateway": "Gateway Service",
         "startGateway": "Start Gateway",
         "status": {

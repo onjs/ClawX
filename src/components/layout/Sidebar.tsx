@@ -246,7 +246,7 @@ export function Sidebar() {
         {!sidebarCollapsed && (
           <div className="flex items-center gap-2 px-2 overflow-hidden">
             <span className="text-lg font-semibold truncate whitespace-nowrap text-foreground/90">
-              openclaw
+              Openclaw
             </span>
           </div>
         )}

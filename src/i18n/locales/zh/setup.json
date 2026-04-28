@@ -40,7 +40,7 @@
         "viewLogs": "查看日志",
         "recheck": "重新检查",
         "nodejs": "Node.js 运行时",
-        "openclaw": "OpenClaw 包",
+        "Openclaw": "OpenClaw 包",
         "gateway": "网关服务",
         "startGateway": "启动网关",
         "status": {

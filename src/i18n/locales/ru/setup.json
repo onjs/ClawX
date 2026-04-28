@@ -40,7 +40,7 @@
         "viewLogs": "Просмотреть журналы",
         "recheck": "Перепроверить",
         "nodejs": "Среда выполнения Node.js",
-        "openclaw": "Пакет OpenClaw",
+        "Openclaw": "Пакет OpenClaw",
         "gateway": "Служба шлюза",
         "startGateway": "Запустить шлюз",
         "status": {

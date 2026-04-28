@@ -269,7 +269,7 @@ function WelcomeContent() {
     <div data-testid="setup-welcome-step" className="text-center space-y-4">
        <div className="mb-4 flex justify-center">
          <div className="flex items-center gap-2">
-           <h1 className="text-2xl font-bold">openclaw</h1>
+           <h1 className="text-2xl font-bold">Openclaw</h1>
          </div>
        </div>
       <h2 className="text-xl font-semibold">{t('welcome.title')}</h2>
