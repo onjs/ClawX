@@ -1042,17 +1042,7 @@ export function Settings() {
             </>
           )}
 
-          <Separator className="bg-black/5 dark:bg-white/5" />
-
-          {/* Updates (disabled) */}
-          <div data-testid="settings-updates-disabled">
-            <h2 className="text-3xl font-serif text-foreground mb-6 font-normal tracking-tight" style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", Times, serif' }}>
-              {t('updates.title')}
-            </h2>
-            <p className="text-[14px] text-muted-foreground">
-              {t('updates.disabled')}
-            </p>
-          </div>
+        </div>
 
           <Separator className="bg-black/5 dark:bg-white/5" />
 
