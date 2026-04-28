@@ -156,6 +156,7 @@
   "updates": {
     "title": "Updates",
     "description": "Keep ClawX up to date",
+    "disabled": "Auto-update is currently disabled in this build.",
     "autoCheck": "Auto-check for updates",
     "autoCheckDesc": "Check for updates on startup",
     "autoDownload": "Auto-update",

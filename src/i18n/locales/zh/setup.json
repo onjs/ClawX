@@ -120,6 +120,12 @@
         "running": "运行中",
         "footer": "您可以在设置中自定义技能并连接渠道"
     },
+    "activation": {
+        "title": "激活 ClawX",
+        "codePlaceholder": "粘贴激活码",
+        "submit": "立即激活",
+        "validating": "校验中..."
+    },
     "nav": {
         "next": "下一步",
         "back": "返回",

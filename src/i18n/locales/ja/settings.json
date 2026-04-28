@@ -155,6 +155,7 @@
   "updates": {
     "title": "アップデート",
     "description": "ClawX を最新に保つ",
+    "disabled": "このビルドではアプリの自動更新は無効です。",
     "autoCheck": "自動更新チェック",
     "autoCheckDesc": "起動時に更新を確認",
     "autoDownload": "自動アップデート",

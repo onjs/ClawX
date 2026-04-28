@@ -120,6 +120,12 @@
         "running": "実行中",
         "footer": "設定でスキルをカスタマイズしたり、チャンネルを接続したりできます"
     },
+    "activation": {
+        "title": "ClawX を有効化",
+        "codePlaceholder": "有効化コードを貼り付け",
+        "submit": "有効化",
+        "validating": "検証中..."
+    },
     "nav": {
         "next": "次へ",
         "back": "戻る",

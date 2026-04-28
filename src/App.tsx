@@ -17,9 +17,11 @@ import { Skills } from './pages/Skills';
 import { Cron } from './pages/Cron';
 import { Settings } from './pages/Settings';
 import { Setup } from './pages/Setup';
+import { Activation } from './pages/Activation';
 import { useSettingsStore } from './stores/settings';
 import { useGatewayStore } from './stores/gateway';
 import { useProviderStore } from './stores/providers';
+import { useLicenseStore } from './stores/license';
 import { applyGatewayTransportPreference } from './lib/api-client';
 import { rendererExtensionRegistry } from './extensions/registry';
 import { loadExternalRendererExtensions } from './extensions/_ext-bridge.generated';
@@ -98,12 +100,19 @@ function App() {
   const theme = useSettingsStore((state) => state.theme);
   const language = useSettingsStore((state) => state.language);
   const setupComplete = useSettingsStore((state) => state.setupComplete);
+  const initLicense = useLicenseStore((state) => state.init);
+  const licenseInitialized = useLicenseStore((state) => state.initialized);
+  const licenseActivated = useLicenseStore((state) => state.activated);
   const initGateway = useGatewayStore((state) => state.init);
   const initProviders = useProviderStore((state) => state.init);
 
   useEffect(() => {
     initSettings();
   }, [initSettings]);
+
+  useEffect(() => {
+    initLicense();
+  }, [initLicense]);
 
   // Sync i18n language with persisted settings on mount
   useEffect(() => {
@@ -124,10 +133,28 @@ function App() {
 
   // Redirect to setup wizard if not complete
   useEffect(() => {
-    if (!setupComplete && !skipSetupForE2E && !location.pathname.startsWith('/setup')) {
+    if (!licenseInitialized) return;
+    if (!licenseActivated && !skipSetupForE2E && !location.pathname.startsWith('/activation')) {
+      navigate('/activation');
+      return;
+    }
+    if (
+      licenseActivated
+      && location.pathname.startsWith('/activation')
+      && !skipSetupForE2E
+    ) {
+      navigate(setupComplete ? '/' : '/setup');
+      return;
+    }
+    if (
+      licenseActivated
+      && !setupComplete
+      && !skipSetupForE2E
+      && !location.pathname.startsWith('/setup')
+    ) {
       navigate('/setup');
     }
-  }, [setupComplete, skipSetupForE2E, location.pathname, navigate]);
+  }, [licenseInitialized, licenseActivated, setupComplete, skipSetupForE2E, location.pathname, navigate]);
 
   // Listen for navigation events from main process
   useEffect(() => {
@@ -176,11 +203,20 @@ function App() {
 
   const extraRoutes = rendererExtensionRegistry.getExtraRoutes();
 
+  if (!licenseInitialized && !skipSetupForE2E) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background text-muted-foreground">
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <TooltipProvider delayDuration={300}>
         <Routes>
           {/* Setup wizard (shown on first launch) */}
+          <Route path="/activation" element={<Activation />} />
           <Route path="/setup/*" element={<Setup />} />
 
           {/* Main application routes */}

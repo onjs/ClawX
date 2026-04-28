@@ -164,6 +164,9 @@ pnpm dev
 ```
 ### First Launch
 
+Before setup starts, ClawX requires a valid offline activation code.  
+The app verifies the code signature and its time window, then binds activation to the local device.
+
 When you launch ClawX for the first time, the **Setup Wizard** will guide you through:
 
 1. **Language & Region** – Configure your preferred locale
@@ -219,7 +222,7 @@ ClawX employs a **dual-process architecture** with a unified host API layer. The
 │  │  • Window & application lifecycle management               │  │
 │  │  • Gateway process supervision                              │  │
 │  │  • System integration (tray, notifications, keychain)       │  │
-│  │  • Auto-update orchestration                                │  │
+│  │  • Auto-update (currently disabled in app builds)          │  │
 │  └────────────────────────────────────────────────────────────┘  │
 │                              │                                    │
 │                              │ IPC (authoritative control plane)  │

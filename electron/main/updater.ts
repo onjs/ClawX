@@ -14,6 +14,8 @@ import { setQuitting } from './app-state';
 
 /** Base CDN URL (without trailing channel path) */
 const OSS_BASE_URL = 'https://oss.intelli-spectrum.com';
+const AUTO_UPDATE_ENABLED = false;
+const AUTO_UPDATE_DISABLED_ERROR = 'Auto-update is disabled in this build.';
 
 export interface UpdateStatus {
   status: 'idle' | 'checking' | 'available' | 'not-available' | 'downloading' | 'downloaded' | 'error';
@@ -58,10 +60,16 @@ export class AppUpdater extends EventEmitter {
     this.on('error', (error: Error) => {
       logger.error('[Updater] AppUpdater emitted error:', error);
     });
-    
+
+    if (!AUTO_UPDATE_ENABLED) {
+      logger.info('[Updater] Auto-update is disabled by policy');
+      this.status = { status: 'error', error: AUTO_UPDATE_DISABLED_ERROR };
+      return;
+    }
+
     autoUpdater.autoDownload = false;
     autoUpdater.autoInstallOnAppQuit = true;
-    
+
     autoUpdater.logger = {
       info: (msg: string) => logger.info('[Updater]', msg),
       warn: (msg: string) => logger.warn('[Updater]', msg),
@@ -88,6 +96,13 @@ export class AppUpdater extends EventEmitter {
     });
 
     this.setupListeners();
+  }
+
+  private ensureEnabled(action: string): boolean {
+    if (AUTO_UPDATE_ENABLED) return true;
+    logger.info(`[Updater] Ignoring ${action}; auto-update is disabled`);
+    this.updateStatus({ status: 'error', error: AUTO_UPDATE_DISABLED_ERROR });
+    return false;
   }
 
   /**
@@ -174,6 +189,10 @@ export class AppUpdater extends EventEmitter {
    * final status so the UI never gets stuck in 'checking'.
    */
   async checkForUpdates(): Promise<UpdateInfo | null> {
+    if (!this.ensureEnabled('checkForUpdates')) {
+      return null;
+    }
+
     try {
       const result = await autoUpdater.checkForUpdates();
 
@@ -205,6 +224,10 @@ export class AppUpdater extends EventEmitter {
    * Download available update
    */
   async downloadUpdate(): Promise<void> {
+    if (!this.ensureEnabled('downloadUpdate')) {
+      throw new Error(AUTO_UPDATE_DISABLED_ERROR);
+    }
+
     try {
       await autoUpdater.downloadUpdate();
     } catch (error) {
@@ -225,6 +248,10 @@ export class AppUpdater extends EventEmitter {
    * the window cleanly while ShipIt runs independently to replace the app.
    */
   quitAndInstall(): void {
+    if (!this.ensureEnabled('quitAndInstall')) {
+      return;
+    }
+
     logger.info('[Updater] quitAndInstall called');
     setQuitting();
     autoUpdater.quitAndInstall();
@@ -251,6 +278,11 @@ export class AppUpdater extends EventEmitter {
   }
 
   cancelAutoInstall(): void {
+    if (!AUTO_UPDATE_ENABLED) {
+      this.sendToRenderer('update:auto-install-countdown', { seconds: -1, cancelled: true });
+      return;
+    }
+
     this.clearAutoInstallTimer();
     this.sendToRenderer('update:auto-install-countdown', { seconds: -1, cancelled: true });
   }
@@ -266,6 +298,7 @@ export class AppUpdater extends EventEmitter {
    * Set update channel (stable, beta, dev)
    */
   setChannel(channel: 'stable' | 'beta' | 'dev'): void {
+    if (!AUTO_UPDATE_ENABLED) return;
     autoUpdater.channel = channel;
   }
 
@@ -273,6 +306,7 @@ export class AppUpdater extends EventEmitter {
    * Set auto-download preference
    */
   setAutoDownload(enable: boolean): void {
+    if (!AUTO_UPDATE_ENABLED) return;
     autoUpdater.autoDownload = enable;
   }
 

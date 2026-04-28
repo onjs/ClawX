@@ -7,6 +7,7 @@ import { join, resolve } from 'node:path';
 
 type LaunchElectronOptions = {
   skipSetup?: boolean;
+  enableActivationGate?: boolean;
 };
 
 type IpcMockConfig = {
@@ -137,6 +138,7 @@ async function launchClawXElectron(
       CLAWX_E2E: '1',
       CLAWX_USER_DATA_DIR: userDataDir,
       ...(options.skipSetup ? { CLAWX_E2E_SKIP_SETUP: '1' } : {}),
+      ...(options.enableActivationGate ? { CLAWX_E2E_ENABLE_ACTIVATION: '1' } : {}),
       CLAWX_PORT_CLAWX_HOST_API: String(hostApiPort),
     },
     timeout: 90_000,

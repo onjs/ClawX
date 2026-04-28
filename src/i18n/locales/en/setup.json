@@ -120,6 +120,12 @@
         "running": "Running",
         "footer": "You can customize skills and connect channels in Settings"
     },
+    "activation": {
+        "title": "Activate ClawX",
+        "codePlaceholder": "Paste activation code",
+        "submit": "Activate",
+        "validating": "Validating..."
+    },
     "nav": {
         "next": "Next",
         "back": "Back",
