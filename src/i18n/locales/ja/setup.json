@@ -125,7 +125,7 @@
         "codePlaceholder": "有効化コードを貼り付け",
         "submit": "有効化",
         "validating": "検証中...",
-        "invalidCode": "無効な有効化コードです。"
+        "invalidCode": "無効な有効化コードです"
     },
     "nav": {
         "next": "次へ",

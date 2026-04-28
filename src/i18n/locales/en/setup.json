@@ -125,7 +125,7 @@
         "codePlaceholder": "Paste activation code",
         "submit": "Activate",
         "validating": "Validating...",
-        "invalidCode": "Invalid activation code."
+        "invalidCode": "Invalid activation code"
     },
     "nav": {
         "next": "Next",

@@ -52,7 +52,7 @@ export function Activation() {
           </form>
 
           {error && error !== 'Activation record not found.' && (
-            <p data-testid="activation-error" className="mt-4 text-sm text-destructive">
+            <p data-testid="activation-error" className="mt-4 text-lg text-destructive">
               {t('activation.invalidCode')}
             </p>
           )}
