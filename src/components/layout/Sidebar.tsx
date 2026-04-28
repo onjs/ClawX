@@ -245,7 +245,7 @@ export function Sidebar() {
       <div className={cn("flex items-center p-2 h-12", sidebarCollapsed ? "justify-center" : "justify-between")}>
         {!sidebarCollapsed && (
           <div className="flex items-center gap-2 px-2 overflow-hidden">
-            <span className="text-sm font-semibold truncate whitespace-nowrap text-foreground/90">
+            <span className="text-lg font-semibold truncate whitespace-nowrap text-foreground/90">
               openclaw
             </span>
           </div>
