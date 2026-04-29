@@ -113,7 +113,11 @@ function isValidPayload(payload: unknown): payload is LicensePayload {
   );
 }
 
-function parseAndVerifyLicenseCode(code: string, atMs = nowMs()): ParseResult {
+function parseAndVerifyLicenseCode(
+  code: string,
+  atMs = nowMs(),
+  skipExpirationCheck = false
+): ParseResult {
   const normalizedCode = code.trim();
   if (!normalizedCode) {
     return createFailure('invalid-format', 'Activation code is empty.');
@@ -158,7 +162,8 @@ function parseAndVerifyLicenseCode(code: string, atMs = nowMs()): ParseResult {
   if (atMs < payloadJson.nbf) {
     return createFailure('not-yet-valid', 'Activation code is not yet valid.');
   }
-  if (atMs > payloadJson.exp) {
+  
+  if (!skipExpirationCheck && atMs > payloadJson.exp) {
     return createFailure('expired', 'Activation code has expired.');
   }
 
@@ -311,8 +316,9 @@ export async function getLicenseStatus(): Promise<LicenseStatus> {
     };
   }
 
-  const verify = parseAndVerifyLicenseCode(record.code);
-  if (!verify.ok) {
+  const verify = parseAndVerifyLicenseCode(record.code, nowMs(), true);
+  
+  if (!verify.ok && verify.reason !== 'expired') {
     return {
       activated: false,
       reason: verify.reason,
@@ -322,7 +328,6 @@ export async function getLicenseStatus(): Promise<LicenseStatus> {
 
   return {
     activated: true,
-    expiresAtMs: verify.payload.exp,
     activatedAtMs: record.activatedAtMs,
   };
 }
@@ -362,6 +367,5 @@ export async function activateLicenseCode(code: string): Promise<LicenseStatus> 
   return {
     activated: true,
     activatedAtMs: record.activatedAtMs,
-    expiresAtMs: verify.payload.exp,
   };
 }

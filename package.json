@@ -69,7 +69,6 @@
         "version:major": "pnpm version major",
         "version:prerelease-beta": "pnpm version prerelease --preid=beta",
         "release:validate": "node scripts/assert-tag-matches-package.mjs",
-        "license:generate": "node scripts/generate-activation-code.mjs",
         "postversion": "git push && git push --tags"
     },
     "dependencies": {
