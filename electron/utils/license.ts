@@ -159,12 +159,13 @@ function parseAndVerifyLicenseCode(
     return createFailure('invalid-signature', 'Activation code signature verification failed.');
   }
 
-  if (atMs < payloadJson.nbf) {
-    return createFailure('not-yet-valid', 'Activation code is not yet valid.');
-  }
-  
-  if (!skipExpirationCheck && atMs > payloadJson.exp) {
-    return createFailure('expired', 'Activation code has expired.');
+  if (!skipExpirationCheck) {
+    if (atMs < payloadJson.nbf) {
+      return createFailure('not-yet-valid', 'Activation code is not yet valid.');
+    }
+    if (atMs > payloadJson.exp) {
+      return createFailure('expired', 'Activation code has expired.');
+    }
   }
 
   return {
