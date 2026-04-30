@@ -34,7 +34,8 @@ export interface LicenseStatus {
 interface LicensePayload {
   v: number;
   nbf: number;
-  exp: number;
+  code_exp: number;
+  app_exp?: number;
 }
 
 interface StoredLicenseRecord {
@@ -42,6 +43,7 @@ interface StoredLicenseRecord {
   code: string;
   boundDeviceDigest: string;
   activatedAtMs: number;
+  appExpiresAtMs?: number;
 }
 
 interface SafeEnvelope {
@@ -103,14 +105,22 @@ function createFailure(reason: LicenseFailureReason, _message: string): ParseFai
 function isValidPayload(payload: unknown): payload is LicensePayload {
   if (!payload || typeof payload !== 'object') return false;
   const candidate = payload as Partial<LicensePayload>;
-  return (
-    candidate.v === 1
-    && Number.isFinite(candidate.nbf)
-    && Number.isFinite(candidate.exp)
-    && typeof candidate.nbf === 'number'
-    && typeof candidate.exp === 'number'
-    && candidate.exp > candidate.nbf
-  );
+  if (
+    candidate.v !== 1
+    || !Number.isFinite(candidate.nbf)
+    || !Number.isFinite(candidate.code_exp)
+    || typeof candidate.nbf !== 'number'
+    || typeof candidate.code_exp !== 'number'
+    || candidate.code_exp <= candidate.nbf
+  ) {
+    return false;
+  }
+  if (candidate.app_exp !== undefined) {
+    if (typeof candidate.app_exp !== 'number' || !Number.isFinite(candidate.app_exp)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function parseAndVerifyLicenseCode(
@@ -163,7 +173,7 @@ function parseAndVerifyLicenseCode(
     if (atMs < payloadJson.nbf) {
       return createFailure('not-yet-valid', 'Activation code is not yet valid.');
     }
-    if (atMs > payloadJson.exp) {
+    if (atMs > payloadJson.code_exp) {
       return createFailure('expired', 'Activation code has expired.');
     }
   }
@@ -245,6 +255,11 @@ function decryptRecord(envelope: StoredLicenseEnvelope, deviceDigest: string): S
     ) {
       return null;
     }
+    if (parsed.appExpiresAtMs != null) {
+      if (typeof parsed.appExpiresAtMs !== 'number' || !Number.isFinite(parsed.appExpiresAtMs)) {
+        return null;
+      }
+    }
     return parsed as StoredLicenseRecord;
   } catch {
     return null;
@@ -318,8 +333,8 @@ export async function getLicenseStatus(): Promise<LicenseStatus> {
   }
 
   const verify = parseAndVerifyLicenseCode(record.code, nowMs(), true);
-  
-  if (!verify.ok && verify.reason !== 'expired') {
+
+  if (!verify.ok) {
     return {
       activated: false,
       reason: verify.reason,
@@ -327,9 +342,20 @@ export async function getLicenseStatus(): Promise<LicenseStatus> {
     };
   }
 
+  if (record.appExpiresAtMs !== undefined && nowMs() > record.appExpiresAtMs) {
+    return {
+      activated: false,
+      reason: 'expired',
+      message: 'Application activation has expired.',
+      activatedAtMs: record.activatedAtMs,
+      expiresAtMs: record.appExpiresAtMs,
+    };
+  }
+
   return {
     activated: true,
     activatedAtMs: record.activatedAtMs,
+    expiresAtMs: record.appExpiresAtMs,
   };
 }
 
@@ -353,6 +379,7 @@ export async function activateLicenseCode(code: string): Promise<LicenseStatus> 
     code: verify.normalizedCode,
     boundDeviceDigest: deviceDigest,
     activatedAtMs: nowMs(),
+    appExpiresAtMs: verify.payload.app_exp,
   };
 
   try {
@@ -368,5 +395,6 @@ export async function activateLicenseCode(code: string): Promise<LicenseStatus> 
   return {
     activated: true,
     activatedAtMs: record.activatedAtMs,
+    expiresAtMs: record.appExpiresAtMs,
   };
 }
